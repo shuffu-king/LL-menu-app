@@ -30,8 +30,16 @@ struct OurDishes: View {
                         (dishes: [Dish]) in
                         List {
                             // Code for the list enumeration here
+                            ForEach(dishes){ dish in
+                                DisplayDish(dish)
+                                    .onTapGesture {
+                                        showAlert.toggle()
+                                    }
+                                
+                            }
                         }
                         // add the search bar modifier here
+                        .searchable(text: $searchText, prompt: "search...")
                     }
             }
             
@@ -57,13 +65,25 @@ struct OurDishes: View {
             
         }
     }
-}
-
-struct OurDishes_Previews: PreviewProvider {
-    static var previews: some View {
-        OurDishes()
+    
+    func buildPredicate() -> NSPredicate {
+        return searchText == "" ? NSPredicate(value: true) : NSPredicate(format: "name CONTAINS[cd] %@", searchText)
     }
+    
+    func buildSortDescriptors() -> [NSSortDescriptor] {
+        return [NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.localizedStandardCompare))]
+    }
+    
 }
+ 
+
+    
+    
+    struct OurDishes_Previews: PreviewProvider {
+        static var previews: some View {
+            OurDishes()
+        }
+    }
 
 
 
